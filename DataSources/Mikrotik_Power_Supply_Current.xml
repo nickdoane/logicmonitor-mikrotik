@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1659116540</version>
+        <name>Mikrotik_Power_Supply_Current</name>
+        <displayedas>Mikrotik Power Supply Current</displayedas>
+        <description></description>
+        <collector>snmp</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <useWildValueAsUniqueIdentifier>false</useWildValueAsUniqueIdentifier>
+        <schedule>180</schedule>
+        <appliesTo>hasCategory(&#34;Mikrotik&#34;)</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_snmp</wildcardlinuxscript>
+        <wildcardlinuxcmdline> type=&#34;value&#34; oid=&#34;.1.3.6.1.4.1.14988.1.1.3.100.1.2&#34;  descOid=&#34;&#34; oid2=&#34;&#34;  </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_snmp</wildcardwinscript>
+        <wildcardwincmdline> type=&#34;value&#34; oid=&#34;.1.3.6.1.4.1.14988.1.1.3.100.1.2&#34;  descOid=&#34;&#34; oid2=&#34;&#34;  </wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group></group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_snmp","agdparams":"","id":0,"filters":[{"attribute":"auto.mikrotik.sensordescription","operation":"RegexMatch","value":"psu.*current"}],"params":{"descOid":"","ad_param_externalresourceid":"","oid":".1.3.6.1.4.1.14988.1.1.3.100.1.2","ILP":"[{\"method\":\"get\",\"name\":\"auto.mikrotik.sensordescription\",\"oid\":\".1.3.6.1.4.1.14988.1.1.3.100.1.2.##WILDVALUE##\"}]","oid2":"","type":"value","ad_param_externalresourcetype":""}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>ip</name>
+            <value>dns</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>auto.mikrotik.sensordescription	RegexMatch	psu.*current</value>
+            <comment>Only select indexes for psu current.</comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>powerSupplymAmps</name>
+            <originId>b-3dXKp6SLyC4WZTWgIPOA</originId>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>Unclear what this datapoint describes.  Its not documented.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1>.1.3.6.1.4.1.14988.1.1.3.100.1.4.##WILDVALUE##</userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>powerSupplyState</name>
+            <originId>qZTyf_txSKeFrTgcVcgeCA</originId>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>Undocumented OID.  Assuming 0=Active</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1>.1.3.6.1.4.1.14988.1.1.3.100.1.3.##WILDVALUE##</userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>

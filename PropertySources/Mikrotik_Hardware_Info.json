@@ -1,0 +1,53 @@
+{
+    "scheduleOption": 0,
+    "metadata": {
+        "currentUuid": "BQlmHEplQoSqWiaVXhUcow",
+        "originalUuid": "BQlmHEplQoSqWiaVXhUcow",
+        "authorCompanyUuid": "3db6928b-457f-485b-81bf-6c4eed6b035d",
+        "registryVersion": "1.0.0",
+        "checksum": "868ca82ffc79b2b171ef2a6bd72dbb33"
+    },
+    "dataType": 0,
+    "description": "",
+    "appliesTo": "hasCategory(\"Mikrotik\")",
+    "technology": "",
+    "type": 5,
+    "params": [
+        {
+            "name": "linuxcmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "linuxscript",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "scriptgroovy",
+            "comment": "",
+            "value": "import com.santaba.agent.groovyapi.snmp.Snmp;\n// get the snmp host from the device properties\ndef host = hostProps.get('system.hostname');\n// define a list of product oids\ndef mikrotik_hardware_info =\n[\nbuildTime    : '.1.3.6.1.4.1.14988.1.1.7.6.0',\nserialNumber : '.1.3.6.1.4.1.14988.1.1.7.3.0',\nfirmwareVersion : '.1.3.6.1.4.1.14988.1.1.7.4.0',\n\n];\n// iterate over each oid entry\nmikrotik_hardware_info.each\n{ key, oid ->\n    // retrieve the oid and print the value\n    value = Snmp.get(host, oid);\n    println \"auto.mikrotik.\" + key + \"=\" + value;\n}\nreturn(0);"
+        },
+        {
+            "name": "scripttype",
+            "comment": "embed",
+            "value": "embed"
+        },
+        {
+            "name": "windowscmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "windowsscript",
+            "comment": "",
+            "value": ""
+        }
+    ],
+    "version": 1658188046,
+    "tags": "",
+    "auditVersion": 0,
+    "name": "Mikrotik_Hardware_Info",
+    "id": 248,
+    "group": ""
+}

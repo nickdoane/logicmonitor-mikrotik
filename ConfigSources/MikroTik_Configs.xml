@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1658255006</version>
+        <name>MikroTik_Configs</name>
+        <displayedas>MikroTik Configs</displayedas>
+        <description>Captures MikroTik running configuration and ip addresses</description>
+        <collector>script</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <useWildValueAsUniqueIdentifier>false</useWildValueAsUniqueIdentifier>
+        <schedule>14400</schedule>
+        <appliesTo>hasCategory(&#34;MikroTik&#34;) &#38;&#38; ssh.user</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+import com.jcraft.jsch.JSch
+import com.santaba.agent.util.Settings
+
+host = hostProps.get(&#34;system.hostname&#34;)
+user = hostProps.get(&#34;ssh.user&#34;)
+pass = hostProps.get(&#34;ssh.pass&#34;)
+port = hostProps.get(&#34;ssh.port&#34;)?.toInteger() ?: 22
+cert = hostProps.get(&#34;ssh.cert&#34;) ?: &#39;~/.ssh/id_rsa&#39;
+timeout = 15000 // timeout in milliseconds
+
+try {
+
+    Map commands = [&#39;IP Addresses&#39;: &#39;ip address print&#39;,
+                    &#39;Config&#39;      : &#39;export hide-sensitive&#39;]
+
+    commands.each { k, v -&#62;
+
+        // save command output and split on newlines .
+        def command_output = getCommandOutput(v)
+
+        if (command_output) {
+
+            println &#34;${v}##${k}&#34;
+        }
+    }
+
+
+    return 0
+}
+catch (Exception e) {
+    println &#34;Unexpected Exception : &#34; + e
+    return 1
+}
+
+
+/**
+ * Helper method which handles creating JSCH session and executing commands
+ * @return
+ */
+def getCommandOutput(String input_command) {
+    try {
+        // instantiate JSCH object.
+        jsch = new JSch()
+
+        // do we have an user and no pass ?
+        if (user &#38;&#38; !pass) {
+            // Yes, so lets try connecting via cert.
+            jsch.addIdentity(cert)
+        }
+
+        // create session.
+        session = jsch.getSession(user, host, port)
+
+        // given we are running non-interactively, we will automatically accept new host keys.
+        session.setConfig(&#34;StrictHostKeyChecking&#34;, &#34;no&#34;)
+        String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)
+        session.setConfig(&#34;PreferredAuthentications&#34;, authMethod)
+
+        // set session timeout, in milliseconds.
+        session.setTimeout(timeout)
+
+        // is host configured with a user &#38; password?
+        if (pass) {
+            // set password.
+            session.setPassword(pass)
+        }
+
+        // connect
+        session.connect()
+
+        // execute command.
+        channel = session.openChannel(&#34;exec&#34;)
+        channel.setCommand(input_command)
+
+        // collect command output.
+        def commandOutput = channel.getInputStream()
+        channel.connect()
+
+        def output = commandOutput.text
+
+        // disconnect
+        channel.disconnect()
+
+        return output
+    }
+    catch (Exception e) {
+        e.printStackTrace()
+    }
+    // ensure we disconnect the session.
+    finally {
+        session.disconnect()
+    }
+}</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group></group>
+        <tags></tags>
+        <technology>- https://wiki.mikrotik.com/wiki/Manual:Configuration_Management#Exporting_Configuration</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport com.jcraft.jsch.JSch\nimport com.santaba.agent.util.Settings\n\nhost = hostProps.get(\"system.hostname\")\nuser = hostProps.get(\"ssh.user\")\npass = hostProps.get(\"ssh.pass\")\nport = hostProps.get(\"ssh.port\")?.toInteger() ?: 22\ncert = hostProps.get(\"ssh.cert\") ?: '~/.ssh/id_rsa'\ntimeout = 15000 // timeout in milliseconds\n\ntry {\n\n    Map commands = ['IP Addresses': 'ip address print',\n                    'Config'      : 'export hide-sensitive']\n\n    commands.each { k, v ->\n\n        // save command output and split on newlines .\n        def command_output = getCommandOutput(v)\n\n        if (command_output) {\n\n            println \"${v}##${k}\"\n        }\n    }\n\n\n    return 0\n}\ncatch (Exception e) {\n    println \"Unexpected Exception : \" + e\n    return 1\n}\n\n\n/**\n * Helper method which handles creating JSCH session and executing commands\n * @return\n */\ndef getCommandOutput(String input_command) {\n    try {\n        // instantiate JSCH object.\n        jsch = new JSch()\n\n        // do we have an user and no pass ?\n        if (user && !pass) {\n            // Yes, so lets try connecting via cert.\n            jsch.addIdentity(cert)\n        }\n\n        // create session.\n        session = jsch.getSession(user, host, port)\n\n        // given we are running non-interactively, we will automatically accept new host keys.\n        session.setConfig(\"StrictHostKeyChecking\", \"no\")\n        String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)\n        session.setConfig(\"PreferredAuthentications\", authMethod)\n\n        // set session timeout, in milliseconds.\n        session.setTimeout(timeout)\n\n        // is host configured with a user & password?\n        if (pass) {\n            // set password.\n            session.setPassword(pass)\n        }\n\n        // connect\n        session.connect()\n\n        // execute command.\n        channel = session.openChannel(\"exec\")\n        channel.setCommand(input_command)\n\n        // collect command output.\n        def commandOutput = channel.getInputStream()\n        channel.connect()\n\n        def output = commandOutput.text\n\n        // disconnect\n        channel.disconnect()\n\n        return output\n    }\n    catch (Exception e) {\n        e.printStackTrace()\n    }\n    // ensure we disconnect the session.\n    finally {\n        session.disconnect()\n    }\n}"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>2</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+import com.jcraft.jsch.JSch
+import com.santaba.agent.util.Settings
+
+host = hostProps.get(&#34;system.hostname&#34;)
+user = hostProps.get(&#34;ssh.user&#34;)
+pass = hostProps.get(&#34;ssh.pass&#34;)
+port = hostProps.get(&#34;ssh.port&#34;)?.toInteger() ?: 22
+cert = hostProps.get(&#34;ssh.cert&#34;) ?: &#39;~/.ssh/id_rsa&#39;
+timeout = 15000 // timeout in milliseconds
+wildvalue = &#34;##WILDVALUE##&#34;
+
+try {
+
+    // save command output and split on newlines .
+    def command_output = getCommandOutput(wildvalue)
+
+    command_output.eachLine { line -&#62;
+
+        // Ignore commented lines
+        if (!(line ==~ /^\#.*$/)) {
+
+            println line
+        }
+    }
+
+    return 0
+}
+catch (Exception e) {
+    println &#34;Unexpected Exception : &#34; + e
+    return 1
+}
+
+
+/**
+ * Helper method which handles creating JSCH session and executing commands
+ * @return
+ */
+def getCommandOutput(String input_command) {
+    try {
+        // instantiate JSCH object.
+        jsch = new JSch()
+
+        // do we have an user and no pass ?
+        if (user &#38;&#38; !pass) {
+            // Yes, so lets try connecting via cert.
+            jsch.addIdentity(cert)
+        }
+
+        // create session.
+        session = jsch.getSession(user, host, port)
+
+        // given we are running non-interactively, we will automatically accept new host keys.
+        session.setConfig(&#34;StrictHostKeyChecking&#34;, &#34;no&#34;)
+        String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)
+        session.setConfig(&#34;PreferredAuthentications&#34;, authMethod)
+
+        // set session timeout, in milliseconds.
+        session.setTimeout(timeout)
+
+        // is host configured with a user &#38; password?
+        if (pass) {
+            // set password.
+            session.setPassword(pass)
+        }
+
+        // connect
+        session.connect()
+
+        // execute command.
+        channel = session.openChannel(&#34;exec&#34;)
+        channel.setCommand(input_command)
+
+        // collect command output.
+        def commandOutput = channel.getInputStream()
+        channel.connect()
+
+        def output = commandOutput.text
+
+        // disconnect
+        channel.disconnect()
+
+        return output
+    }
+    catch (Exception e) {
+        e.printStackTrace()
+    }
+    // ensure we disconnect the session.
+    finally {
+        session.disconnect()
+    }
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>properties</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>csfileformat</name>
+            <value>arbitrary</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>cstimestampformat</name>
+            <value>yyyy-MM-dd hh:mm:ss z</value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>RetrievalCheck</name>
+            <originId>g2R5JxpaTRWoIk58GG5Kow</originId>
+            <dataType>1</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam>{&#34;fetch_check&#34;:{&#34;fetch&#34;:0},&#34;format&#34;:&#34;arbitrary&#34;}</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr>= 1</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>Cannot retrieve the config file.</description>
+            <maxvalue>1</maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1>fetch</userparam1>
+            <userparam2>false</userparam2>
+            <userparam3>0</userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
