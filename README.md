@@ -1,6 +1,5 @@
 
-MIKROTIK LOGICMODULES
-August 2022
+MIKROTIK LOGICMODULES - August 2022
 
 This archive contains a collection of LogicMonitor "LogicModules" and other information for MikroTik networking products. These are community-developed, custom LogicModules and are not officially supported by the LogicMonitor support team.
 
